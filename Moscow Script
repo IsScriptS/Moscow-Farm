@@ -1,4 +1,5 @@
 -- Помести этот скрипт в StarterPlayer → StarterPlayerScripts как LocalScript
+-- Всё создастся автоматически!
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -7,221 +8,261 @@ local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 local workspace = game:GetService("Workspace")
 
--- Создаём основной ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "EggFarmGui"
-screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
-
--- Создаём главное окно (можно перетаскивать)
-local mainFrame = Instance.new("Frame")
-mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 280, 0, 180)
-mainFrame.Position = UDim2.new(0.5, -140, 0.5, -90)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-mainFrame.BackgroundTransparency = 0.05
-mainFrame.BorderSizePixel = 0
-mainFrame.ClipsDescendants = true
-mainFrame.Parent = screenGui
-
--- Сглаженные углы
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 12)
-corner.Parent = mainFrame
-
--- Тень
-local shadow = Instance.new("UICorner")
-shadow.CornerRadius = UDim.new(0, 12)
-shadow.Parent = mainFrame
-
-local shadowEffect = Instance.new("ShadowEffect")
-shadowEffect.Parent = mainFrame
-
--- Полоса заголовка (для перетаскивания)
-local titleBar = Instance.new("Frame")
-titleBar.Name = "TitleBar"
-titleBar.Size = UDim2.new(1, 0, 0, 35)
-titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-titleBar.BackgroundTransparency = 0.1
-titleBar.BorderSizePixel = 0
-titleBar.Parent = mainFrame
-
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 12)
-titleCorner.Parent = titleBar
-
--- Заголовок
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, -40, 1, 0)
-titleLabel.Position = UDim2.new(0, 10, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "🥚 Ферма яиц"
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 16
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.Parent = titleBar
-
--- Кнопка закрытия
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 30, 0, 30)
-closeButton.Position = UDim2.new(1, -35, 0, 2.5)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-closeButton.BackgroundTransparency = 0.2
-closeButton.Text = "✕"
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.TextSize = 18
-closeButton.Font = Enum.Font.GothamBold
-closeButton.BorderSizePixel = 0
-closeButton.Parent = titleBar
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 6)
-closeCorner.Parent = closeButton
-
--- Кнопка сворачивания
-local minimizeButton = Instance.new("TextButton")
-minimizeButton.Size = UDim2.new(0, 30, 0, 30)
-minimizeButton.Position = UDim2.new(1, -70, 0, 2.5)
-minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 180, 60)
-minimizeButton.BackgroundTransparency = 0.2
-minimizeButton.Text = "−"
-minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizeButton.TextSize = 20
-minimizeButton.Font = Enum.Font.GothamBold
-minimizeButton.BorderSizePixel = 0
-minimizeButton.Parent = titleBar
-
-local minCorner = Instance.new("UICorner")
-minCorner.CornerRadius = UDim.new(0, 6)
-minCorner.Parent = minimizeButton
-
--- Контентная область
-local contentFrame = Instance.new("Frame")
-contentFrame.Size = UDim2.new(1, -20, 1, -55)
-contentFrame.Position = UDim2.new(0, 10, 0, 45)
-contentFrame.BackgroundTransparency = 1
-contentFrame.Parent = mainFrame
-
--- Статусный текст
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, 0, 0, 25)
-statusLabel.Position = UDim2.new(0, 0, 0, 5)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "⚡ Готов к фарму"
-statusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-statusLabel.TextSize = 12
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextXAlignment = Enum.TextXAlignment.Center
-statusLabel.Parent = contentFrame
-
--- Кнопка фарма
-local farmButton = Instance.new("TextButton")
-farmButton.Size = UDim2.new(1, 0, 0, 50)
-farmButton.Position = UDim2.new(0, 0, 0, 40)
-farmButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
-farmButton.Text = "🥚 ФАРМ ЯИЦ 🥚"
-farmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-farmButton.TextSize = 18
-farmButton.Font = Enum.Font.GothamBold
-farmButton.BorderSizePixel = 0
-farmButton.Parent = contentFrame
-
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0, 8)
-buttonCorner.Parent = farmButton
-
--- Тень для кнопки
-local buttonStroke = Instance.new("UIStroke")
-buttonStroke.Color = Color3.fromRGB(100, 200, 100)
-buttonStroke.Thickness = 1
-buttonStroke.Transparency = 0.5
-buttonStroke.Parent = farmButton
-
--- Переменные для перетаскивания
-local dragging = false
-local dragStart = nil
-local startPos = nil
+-- Подождём, пока загрузится экран игрока
+repeat task.wait() until player:FindFirstChild("PlayerGui")
 
 -- Функция поиска целевой модели
 local function findTargetModel()
     local map = workspace:FindFirstChild("Map")
-    if not map then
-        statusLabel.Text = "❌ Папка Map не найдена!"
-        return nil
-    end
     
-    -- Ищем модель с GUID {c9613e79-7ac7-40b0-a418-922f53648102}
-    for _, model in ipairs(map:GetChildren()) do
-        if model:IsA("Model") then
-            local targetPart = model:FindFirstChild("{c9613e79-7ac7-40b0-a418-922f53648102}")
-            if targetPart and targetPart:IsA("BasePart") then
-                return targetPart
+    -- Ищем в Map любую model с GUID {c9613e79-7ac7-40b0-a418-922f53648102}
+    if map then
+        for _, child in ipairs(map:GetChildren()) do
+            if child:IsA("Model") then
+                local eggPart = child:FindFirstChild("{c9613e79-7ac7-40b0-a418-922f53648102}")
+                if eggPart and eggPart:IsA("BasePart") then
+                    return eggPart
+                end
             end
         end
     end
     
-    -- Ищем модель Pine 4 и в ней GUID {19eb907f-38d0-4704-9fe5-d3b7ce8d0ee3}
+    -- Ищем модель Pine 4 с GUID {19eb907f-38d0-4704-9fe5-d3b7ce8d0ee3}
     local pine4 = workspace:FindFirstChild("Pine 4")
     if pine4 and pine4:IsA("Model") then
-        local targetPart = pine4:FindFirstChild("{19eb907f-38d0-4704-9fe5-d3b7ce8d0ee3}")
-        if targetPart and targetPart:IsA("BasePart") then
-            return targetPart
+        local eggPart = pine4:FindFirstChild("{19eb907f-38d0-4704-9fe5-d3b7ce8d0ee3}")
+        if eggPart and eggPart:IsA("BasePart") then
+            return eggPart
         end
     end
     
-    statusLabel.Text = "⚠️ Яйцо не найдено!"
     return nil
 end
 
+-- Создаём GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "EggFarmGUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = player.PlayerGui
+
+-- Главное окно
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 320, 0, 200)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -100)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = screenGui
+
+-- Тень
+local shadow = Instance.new("Frame")
+shadow.Size = UDim2.new(1, 10, 1, 10)
+shadow.Position = UDim2.new(0, -5, 0, -5)
+shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+shadow.BackgroundTransparency = 0.6
+shadow.BorderSizePixel = 0
+shadow.Parent = mainFrame
+
+local shadowCorner = Instance.new("UICorner")
+shadowCorner.CornerRadius = UDim.new(0, 10)
+shadowCorner.Parent = shadow
+
+-- Скругление главного окна
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = mainFrame
+
+-- Обводка
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(80, 80, 120)
+stroke.Thickness = 1
+stroke.Parent = mainFrame
+
+-- Верхняя панель (для перетаскивания)
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 40)
+topBar.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+topBar.BorderSizePixel = 0
+topBar.Parent = mainFrame
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0, 10)
+topCorner.Parent = topBar
+
+-- Заголовок
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -80, 1, 0)
+title.Position = UDim2.new(0, 15, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "🥚 Ферма яиц 🥚"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 16
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextYAlignment = Enum.TextYAlignment.Center
+title.Parent = topBar
+
+-- Кнопка закрытия
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 32, 0, 32)
+closeBtn.Position = UDim2.new(1, -38, 0, 4)
+closeBtn.BackgroundColor3 = Color3.fromRGB(230, 70, 70)
+closeBtn.Text = "✕"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.TextSize = 18
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.BorderSizePixel = 0
+closeBtn.Parent = topBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 6)
+closeCorner.Parent = closeBtn
+
+-- Кнопка сворачивания
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 32, 0, 32)
+minimizeBtn.Position = UDim2.new(1, -76, 0, 4)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 90)
+minimizeBtn.Text = "−"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.TextSize = 24
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.BorderSizePixel = 0
+minimizeBtn.Parent = topBar
+
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0, 6)
+minCorner.Parent = minimizeBtn
+
+-- Контент
+local content = Instance.new("Frame")
+content.Size = UDim2.new(1, -20, 1, -55)
+content.Position = UDim2.new(0, 10, 0, 50)
+content.BackgroundTransparency = 1
+content.Parent = mainFrame
+
+-- Текст статуса
+local statusText = Instance.new("TextLabel")
+statusText.Size = UDim2.new(1, 0, 0, 30)
+statusText.Position = UDim2.new(0, 0, 0, 0)
+statusText.BackgroundTransparency = 1
+statusText.Text = "✨ Готов к работе ✨"
+statusText.TextColor3 = Color3.fromRGB(180, 180, 220)
+statusText.TextSize = 13
+statusText.Font = Enum.Font.Gotham
+statusText.TextXAlignment = Enum.TextXAlignment.Center
+statusText.Parent = content
+
+-- Кнопка фарма
+local farmBtn = Instance.new("TextButton")
+farmBtn.Size = UDim2.new(1, 0, 0, 55)
+farmBtn.Position = UDim2.new(0, 0, 0, 45)
+farmBtn.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+farmBtn.Text = "🥚 НАЧАТЬ ФАРМ 🥚"
+farmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+farmBtn.TextSize = 18
+farmBtn.Font = Enum.Font.GothamBold
+farmBtn.BorderSizePixel = 0
+farmBtn.Parent = content
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 8)
+btnCorner.Parent = farmBtn
+
+local btnStroke = Instance.new("UIStroke")
+btnStroke.Color = Color3.fromRGB(100, 220, 100)
+btnStroke.Thickness = 1.5
+btnStroke.Transparency = 0.3
+btnStroke.Parent = farmBtn
+
+-- Анимация пульсации для кнопки
+local function pulseAnimation()
+    local tween1 = TweenService:Create(farmBtn, TweenInfo.new(0.5), {BackgroundColor3 = Color3.fromRGB(100, 200, 100)})
+    local tween2 = TweenService:Create(farmBtn, TweenInfo.new(0.5), {BackgroundColor3 = Color3.fromRGB(76, 175, 80)})
+    tween1:Play()
+    tween1.Completed:Connect(function()
+        tween2:Play()
+    end)
+end
+
+-- Переменные для перетаскивания
+local dragStart = nil
+local dragStarted = false
+local frameStartPos = nil
+
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragStart = input.Position
+        dragStarted = true
+        frameStartPos = mainFrame.Position
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragStarted and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(frameStartPos.X.Scale, frameStartPos.X.Offset + delta.X, frameStartPos.Y.Scale, frameStartPos.Y.Offset + delta.Y)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragStarted = false
+    end
+end)
+
 -- Функция телепортации
+local isFarming = false
+local farmTask = nil
+
 local function teleportToEgg()
     local target = findTargetModel()
+    
     if target and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = player.Character.HumanoidRootPart
+        local oldCFrame = hrp.CFrame
+        
+        -- Телепортируем
         hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
-        statusLabel.Text = "✅ Телепортирован к яйцу!"
-        statusLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
         
-        -- Анимация кнопки при успехе
-        local tween = TweenService:Create(farmButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 140, 60)})
-        tween:Play()
-        task.wait(0.2)
-        local tween2 = TweenService:Create(farmButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(76, 175, 80)})
-        tween2:Play()
+        -- Визуальный эффект
+        statusText.Text = "✅ Телепортирован!"
+        statusText.TextColor3 = Color3.fromRGB(100, 255, 100)
         
-        task.wait(1)
-        statusLabel.Text = "⚡ Готов к фарму"
-        statusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+        -- Анимация кнопки
+        local flash = TweenService:Create(farmBtn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(60, 140, 60)})
+        flash:Play()
+        flash.Completed:Connect(function()
+            local back = TweenService:Create(farmBtn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(76, 175, 80)})
+            back:Play()
+        end)
+        
+        task.wait(0.8)
+        statusText.Text = "✨ Фармим... ✨"
+        statusText.TextColor3 = Color3.fromRGB(255, 200, 100)
     elseif not target then
-        statusLabel.Text = "❌ Яйцо не найдено!"
-        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        statusText.Text = "❌ Яйцо не найдено!"
+        statusText.TextColor3 = Color3.fromRGB(255, 80, 80)
         task.wait(2)
-        statusLabel.Text = "⚡ Готов к фарму"
-        statusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+        statusText.Text = "✨ Готов к работе ✨"
+        statusText.TextColor3 = Color3.fromRGB(180, 180, 220)
     end
 end
 
--- Запуск фарма по интервалу
-local farming = false
-local farmConnection = nil
-
+-- Запуск/остановка фарма
 local function startFarming()
-    if farming then return end
-    farming = true
-    farmButton.BackgroundColor3 = Color3.fromRGB(220, 80, 80)
-    farmButton.Text = "⏹️ ОСТАНОВИТЬ ⏹️"
-    statusLabel.Text = "🐣 Фармим яйца каждые 2 секунды..."
-    statusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+    if isFarming then return end
+    isFarming = true
     
-    farmConnection = game:GetService("RunService").Stepped:Connect(function()
-        -- Не делаем ничего, просто держим соединение
-    end)
+    farmBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 80)
+    farmBtn.Text = "⏹️ ОСТАНОВИТЬ ⏹️"
+    statusText.Text = "🐣 Фармим яйца... 🐣"
+    statusText.TextColor3 = Color3.fromRGB(255, 200, 100)
     
-    -- Основной цикл
-    task.spawn(function()
-        while farming do
+    farmTask = task.spawn(function()
+        while isFarming do
             teleportToEgg()
             task.wait(2)
         end
@@ -229,71 +270,69 @@ local function startFarming()
 end
 
 local function stopFarming()
-    farming = false
-    if farmConnection then
-        farmConnection:Disconnect()
-        farmConnection = nil
+    isFarming = false
+    if farmTask then
+        task.cancel(farmTask)
+        farmTask = nil
     end
-    farmButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
-    farmButton.Text = "🥚 ФАРМ ЯИЦ 🥚"
-    statusLabel.Text = "⚡ Фарм остановлен"
-    statusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+    farmBtn.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+    farmBtn.Text = "🥚 НАЧАТЬ ФАРМ 🥚"
+    statusText.Text = "✨ Фарм остановлен ✨"
+    statusText.TextColor3 = Color3.fromRGB(180, 180, 220)
     task.wait(1)
-    statusLabel.Text = "⚡ Готов к фарму"
+    statusText.Text = "✨ Готов к работе ✨"
 end
 
--- Обработчик кнопки
-farmButton.MouseButton1Click:Connect(function()
-    if farming then
+-- Нажатие на кнопку
+farmBtn.MouseButton1Click:Connect(function()
+    if isFarming then
         stopFarming()
     else
         startFarming()
     end
+    pulseAnimation()
 end)
 
 -- Закрытие GUI
-closeButton.MouseButton1Click:Connect(function()
-    if farming then
+closeBtn.MouseButton1Click:Connect(function()
+    if isFarming then
         stopFarming()
     end
     screenGui:Destroy()
 end)
 
--- Сворачивание
-local minimized = false
-local originalSize = mainFrame.Size
-local originalContent = contentFrame.Visible
+-- Сворачивание/разворачивание
+local isMinimized = false
+local originalHeight = mainFrame.Size.Y.Offset
 
-minimizeButton.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    if minimized then
-        mainFrame:TweenSize(UDim2.new(0, 280, 0, 40), "Out", "Quad", 0.3, true)
-        contentFrame.Visible = false
-        minimizeButton.Text = "+"
+minimizeBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    
+    if isMinimized then
+        local minimizeTween = TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(0, 320, 0, 40)
+        })
+        minimizeTween:Play()
+        content.Visible = false
+        minimizeBtn.Text = "+"
     else
-        mainFrame:TweenSize(originalSize, "Out", "Quad", 0.3, true)
-        contentFrame.Visible = true
-        minimizeButton.Text = "−"
+        local expandTween = TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(0, 320, 0, 200)
+        })
+        expandTween:Play()
+        content.Visible = true
+        minimizeBtn.Text = "−"
     end
 end)
 
--- Перетаскивание окна
-titleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
+-- Запускаем пульсацию кнопки
+task.spawn(function()
+    while screenGui.Parent do
+        if not isFarming then
+            pulseAnimation()
+        end
+        task.wait(2)
     end
 end)
 
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
+print("✅ GUI Фермы яиц создан! Нажми на кнопку, чтобы начать фарм.")
